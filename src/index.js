@@ -8,7 +8,7 @@ const EXIT_DELAY = 1000
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-const createMicroship = async ({
+const createKubeship = async ({
   port = 3001,
   shutdownDelay = 1000,
   shutdownHandlerTimeout = 5000,
@@ -91,4 +91,4 @@ const createMicroship = async ({
   }
 }
 
-module.exports = { createMicroship }
+module.exports = { createKubeship }

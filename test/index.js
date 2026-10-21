@@ -6,7 +6,7 @@ const http = require('node:http')
 const { describe, it } = require('node:test')
 const assert = require('node:assert/strict')
 
-const { createMicroship } = require('../src')
+const { createKubeship } = require('../src')
 
 const get = port =>
   new Promise((resolve, reject) => {
@@ -18,14 +18,14 @@ const get = port =>
   })
 
 const create = overrides =>
-  createMicroship({
+  createKubeship({
     port: 0,
     shutdownDelay: 0,
     terminate () {},
     ...overrides
   })
 
-describe('microship', () => {
+describe('kubeship', () => {
   it('reports ready only after signalReady', async () => {
     const ship = await create()
     try {
