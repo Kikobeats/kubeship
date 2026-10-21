@@ -2,7 +2,7 @@
   "name": "kubeship",
   "description": "Readiness, liveness, and graceful shutdown for a Node process on Kubernetes.",
   "homepage": "https://github.com/Kikobeats/kubeship",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "main": "src/index.js",
   "author": {
     "email": "josefrancisco.verdu@gmail.com",
