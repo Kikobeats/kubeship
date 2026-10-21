@@ -1,7 +1,7 @@
 {
-  "name": "microship",
+  "name": "kubeship",
   "description": "Readiness, liveness, and graceful shutdown for a Node process on Kubernetes.",
-  "homepage": "https://github.com/Kikobeats/microship",
+  "homepage": "https://github.com/Kikobeats/kubeship",
   "version": "1.0.1",
   "main": "src/index.js",
   "author": {
@@ -12,10 +12,10 @@
   "contributors": [],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kikobeats/microship.git"
+    "url": "git+https://github.com/kikobeats/kubeship.git"
   },
   "bugs": {
-    "url": "https://github.com/Kikobeats/microship/issues"
+    "url": "https://github.com/Kikobeats/kubeship/issues"
   },
   "keywords": [
     "kubernetes",

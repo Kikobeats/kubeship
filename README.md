@@ -1,8 +1,8 @@
-# microship
+# kubeship
 
-![Last version](https://img.shields.io/github/tag/Kikobeats/microship.svg?style=flat-square)
-[![Coverage Status](https://img.shields.io/coveralls/Kikobeats/microship.svg?style=flat-square)](https://coveralls.io/github/Kikobeats/microship)
-[![NPM Version](https://img.shields.io/npm/v/microship.svg?style=flat-square)](https://www.npmjs.org/package/microship)
+![Last version](https://img.shields.io/github/tag/Kikobeats/kubeship.svg?style=flat-square)
+[![Coverage Status](https://img.shields.io/coveralls/Kikobeats/kubeship.svg?style=flat-square)](https://coveralls.io/github/Kikobeats/kubeship)
+[![NPM Version](https://img.shields.io/npm/v/kubeship.svg?style=flat-square)](https://www.npmjs.org/package/kubeship)
 
 > Readiness, liveness, and graceful shutdown for a Node.js process on Kubernetes.
 
@@ -14,18 +14,18 @@
 ## Install
 
 ```bash
-npm install microship
+npm install kubeship
 ```
 
 ## Usage
 
 ```js
-const { createMicroship } = require('microship')
+const { createKubeship } = require('kubeship')
 const http = require('http')
 
 const main = async () => {
   const server = http.createServer((req, res) => res.end('hello'))
-  const ship = await createMicroship()
+  const ship = await createKubeship()
 
   ship.registerShutdownHandler(
     () => new Promise(resolve => server.close(resolve))
@@ -37,7 +37,7 @@ const main = async () => {
 main()
 ```
 
-The probe server is listening as soon as `createMicroship` resolves. The process reports not ready until you call `signalReady()`.
+The probe server is listening as soon as `createKubeship` resolves. The process reports not ready until you call `signalReady()`.
 
 ## Probes
 
@@ -68,7 +68,7 @@ Warning  Unhealthy  3m28s (x15 over 4m38s)  kubelet  Readiness probe failed: Get
 
 Kubernetes marks a healthy pod as unready, and the remaining pods take more load.
 
-**microship** serves the probes from a worker thread. The main thread writes its state and a heartbeat every 500ms into a `SharedArrayBuffer`, and the worker reads it. A busy main thread keeps answering `/ready` with `200`. `/live` fails only when the heartbeat has not moved for 15 seconds, which is a stalled process and not a busy one.
+**kubeship** serves the probes from a worker thread. The main thread writes its state and a heartbeat every 500ms into a `SharedArrayBuffer`, and the worker reads it. A busy main thread keeps answering `/ready` with `200`. `/live` fails only when the heartbeat has not moved for 15 seconds, which is a stalled process and not a busy one.
 
 ## Graceful shutdown
 
@@ -81,7 +81,7 @@ On `SIGTERM` or `SIGINT`, or when you call `ship.shutdown()`:
 
 If the handlers take longer than `shutdownHandlerTimeout`, `terminate` is called right away. If a handler throws, the remaining handlers are skipped and `terminate` is still called.
 
-Do not call `process.exit()` in a shutdown handler. **microship** ends the process after all registered shutdown handlers have run to completion.
+Do not call `process.exit()` in a shutdown handler. **kubeship** ends the process after all registered shutdown handlers have run to completion.
 
 ### Add a delay before you stop handling incoming requests
 
@@ -102,7 +102,7 @@ The default `shutdownHandlerTimeout` is 5 seconds. Raise it when draining takes 
 
 ## Kubernetes configuration
 
-This is a reasonable `Deployment` to pair with the **microship** defaults. The [container probes](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes) point at the endpoints **microship** exposes.
+This is a reasonable `Deployment` to pair with the **kubeship** defaults. The [container probes](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes) point at the endpoints **kubeship** exposes.
 
 <details>
 <summary>deployment.yaml</summary>
@@ -164,9 +164,9 @@ spec:
 
 </details>
 
-Each value is tied to a **microship** option. When you change one side, change the other:
+Each value is tied to a **kubeship** option. When you change one side, change the other:
 
-| Kubernetes                                           | microship                                              | Rule                                                                                         |
+| Kubernetes                                           | kubeship                                               | Rule                                                                                         |
 | ---------------------------------------------------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
 | `containerPort` of the probes                        | `port`                                                 | Equal. Do not use your main service port, and do not expose it through a `Service`.          |
 | `readinessProbe.periodSeconds`                       | `shutdownDelay`                                        | Equal, so the pod is observed as not ready before the shutdown handlers run.                 |
@@ -174,11 +174,11 @@ Each value is tied to a **microship** option. When you change one side, change t
 | `livenessProbe.periodSeconds * failureThreshold`     | `shutdownDelay + shutdownHandlerTimeout + 1s`          | Greater, because `/live` returns `500` from the moment the shutdown starts.                  |
 | `livenessProbe.periodSeconds * failureThreshold`     | The 15 seconds of stalled event loop before `/live` fails | A stalled event loop is restarted within the sum of both: 45 seconds with these values.      |
 
-**microship** always binds `port`, inside and outside Kubernetes. Two processes on the same machine need different ports, or `port: 0` to take any available one. The bound port is available as `ship.port`.
+**kubeship** always binds `port`, inside and outside Kubernetes. Two processes on the same machine need different ports, or `port: 0` to take any available one. The bound port is available as `ship.port`.
 
 ## API
 
-### createMicroship([options])
+### createKubeship([options])
 
 Returns a `Promise` that resolves to a `ship` once the probe server is listening. It rejects when the port cannot be bound.
 
@@ -217,7 +217,7 @@ Stops the heartbeat, removes the signal listeners, and terminates the worker. Re
 
 The API and the Kubernetes guidance come from [lightship](https://github.com/gajus/lightship) by Gajus Kuizinas.
 
-**microship** © [Kiko Beats](https://kikobeats.com), released under the MIT License.<br>
-Authored and maintained by [Kiko Beats](https://kikobeats.com) with help from [contributors](https://github.com/Kikobeats/microship/contributors).
+**kubeship** © [Kiko Beats](https://kikobeats.com), released under the MIT License.<br>
+Authored and maintained by [Kiko Beats](https://kikobeats.com) with help from [contributors](https://github.com/Kikobeats/kubeship/contributors).
 
 > [kikobeats.com](https://kikobeats.com) · GitHub [Kiko Beats](https://github.com/Kikobeats) · X [@Kikobeats](https://x.com/Kikobeats)
